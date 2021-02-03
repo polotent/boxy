@@ -1,9 +1,12 @@
-from scipy.io import wavfile
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.io import wavfile
 import time
-import math
+from math import floor, ceil
+from statistics import stdev
 
+HOP_SIZE = 5
+FRAME_SIZE = 10
 
 def normalize_audio(audio):
     normalized_audio = audio / np.max(np.abs(audio))
@@ -20,9 +23,9 @@ def split_into_frames(audio, sample_rate, frame_size=10, hop_size=5):
     hop_size: in ms
     '''
 
-    hop_size_in_samples = math.floor(sample_rate * hop_size / 1000)
-    frame_size_in_samples = math.floor(sample_rate * frame_size / 1000)
-    n_frames = math.floor(audio.shape[0] / hop_size_in_samples)
+    hop_size_in_samples = floor(sample_rate * hop_size / 1000)
+    frame_size_in_samples = floor(sample_rate * frame_size / 1000)
+    n_frames = floor(audio.shape[0] / hop_size_in_samples)
 
     # in case frame_size > hop_size
     audio = np.concatenate((audio, np.zeros(frame_size_in_samples)))
@@ -37,10 +40,27 @@ def calc_energy(frames):
     return np.sum(np.square(frames), axis=1)
 
 
-def calc_zcr(frames):
+def _calc_ZCR(frame):
     '''
-    func for calculating zero crossing rate
+    func for calculating zero crossing rate in a single frame
     '''
+    ZCR = 0
+    for i in range(len(frame)-2):
+        ZCR += 1/2 * np.abs(np.sign(frame[i]) - np.sign(frame[i+1]))
+    return ZCR
+
+
+def calc_IZCT(frames, hop_size, frame_size, init_length): 
+    n_hops = ceil((init_length - frame_size) / hop_size) if init_length >= frame_size else 0
+    init_frames = frames[:n_hops]
+
+    ZCR = list()
+    for frame in init_frames:
+        ZCR.append(calc_zcr(frame))
+
+    IZC = np.mean(ZCR)
+    IZCT = min((25 / hop_size), IZC * 2 * np.std(ZCR))
+    return IZCT
 
 def print_audio_info(audio, sample_rate, filename):
     print(f'filename: {filename}, sample_rate: {sample_rate}Hz, duration: {(audio.shape[0] / sample_rate):.2f}s, '
@@ -61,9 +81,9 @@ def process_single_audio(audio, sample_rate, filename):
 
     audio = normalize_audio(audio)
     audio = remove_DC_offset(audio)
-    frames = split_into_frames(audio, sample_rate)
+    frames = split_into_frames(audio, sample_rate, FRAME_SIZE, HOP_SIZE)
     energies = calc_energy(frames)
-
+    calc_IZCT()
 
     return audio
 
