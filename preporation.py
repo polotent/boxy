@@ -7,6 +7,7 @@ from statistics import stdev
 
 HOP_SIZE = 5
 FRAME_SIZE = 10
+INIT_LENGTH = 100
 
 def normalize_audio(audio):
     normalized_audio = audio / np.max(np.abs(audio))
@@ -17,12 +18,6 @@ def remove_DC_offset(audio):
     return balanced_audio
 
 def split_into_frames(audio, sample_rate, frame_size=10, hop_size=5):
-    '''
-    sample_rate: in Hz
-    frame_size: in ms
-    hop_size: in ms
-    '''
-
     hop_size_in_samples = floor(sample_rate * hop_size / 1000)
     frame_size_in_samples = floor(sample_rate * frame_size / 1000)
     n_frames = floor(audio.shape[0] / hop_size_in_samples)
@@ -40,7 +35,7 @@ def calc_energy(frames):
     return np.sum(np.square(frames), axis=1)
 
 
-def _calc_ZCR(frame):
+def calc_ZCR(frame):
     '''
     func for calculating zero crossing rate in a single frame
     '''
@@ -52,11 +47,12 @@ def _calc_ZCR(frame):
 
 def calc_IZCT(frames, hop_size, frame_size, init_length): 
     n_hops = ceil((init_length - frame_size) / hop_size) if init_length >= frame_size else 0
+    print(n_hops)
     init_frames = frames[:n_hops]
 
     ZCR = list()
     for frame in init_frames:
-        ZCR.append(calc_zcr(frame))
+        ZCR.append(calc_ZCR(frame))
 
     IZC = np.mean(ZCR)
     IZCT = min((25 / hop_size), IZC * 2 * np.std(ZCR))
@@ -81,7 +77,7 @@ def process_single_audio(audio, sample_rate, filename):
 
     audio = normalize_audio(audio)
     audio = remove_DC_offset(audio)
-    frames = split_into_frames(audio, sample_rate, FRAME_SIZE, HOP_SIZE)
+    frames = split_into_frames(audio, sample_rate, FRAME_SIZE, HOP_SIZE, INIT_LENGTH)
     energies = calc_energy(frames)
     calc_IZCT()
 
