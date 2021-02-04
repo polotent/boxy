@@ -80,11 +80,11 @@ def get_I1(IMN, IMX):
     return 0.03 * (IMX - IMN) + IMN
 
 def get_I2(IMN):
-    return 4 * IMN
+    return 5 * IMN
 
 def get_energy_thresholds(I1, I2):
     ITL = min(I1, I2)
-    ITU = 10 * ITL
+    ITU = 5 * ITL
     return ITL, ITU
 
 def get_frame_by_energy(energies, ITL, ITU, mode='begin'):
@@ -103,7 +103,7 @@ def get_frame_by_energy(energies, ITL, ITU, mode='begin'):
 
     cross_ITL_flag = False
     for i in range(start, end, step):
-        if energies[i] > ITL and not cross_ITL_flag:
+        if energies[i] >= ITL and not cross_ITL_flag:
             cross_ITL_flag = True
             frame_index = i
         if energies[i] < ITL:
@@ -119,22 +119,21 @@ def get_frame_by_ZCR(frames, mode='begin'):
 def get_voice_frames(frames):
     init_frames = get_init_frames(frames, FRAME_SIZE, HOP_SIZE, INIT_LENGTH)
     energies = calc_energies(frames)
-    
-    IMX = get_IMX(energies)
+
     IMN = get_IMN(energies)
+    IMX = get_IMX(energies)
+
     I1 = get_I1(IMN, IMX)
     I2 = get_I2(IMN)
     ITL, ITU = get_energy_thresholds(I1, I2)
+    print(ITL, ITU)
     IZCT = calc_IZCT(init_frames, HOP_SIZE)
 
     # development plotting
     plot_energies(energies, ITL, ITU)
     
     start_frame_index = get_frame_by_energy(energies, ITL, ITU, mode='begin')
-    print(start_frame_index)
     end_frame_index = get_frame_by_energy(energies, ITL, ITU, mode='end')
-    print(end_frame_index)
-    print(len(frames))
 
     voice_frames = frames[start_frame_index:end_frame_index]
     return voice_frames
@@ -179,7 +178,7 @@ def process_single_audio(audio, sample_rate, filename):
     return audio
 
 def process_folder(folder_name):
-    sample_rate, audio = wavfile.read('audio/test2-1channel-32bit-float-44100Hz.wav')
+    sample_rate, audio = wavfile.read('audio/test4-1channel-32bit-float-44100Hz.wav')
     audio = process_single_audio(audio, sample_rate, 'test-1channel-32bit-float.wav')
     # TODO : save numpy array file
     wavfile.write('audio/extracted_command.wav', sample_rate, audio)
