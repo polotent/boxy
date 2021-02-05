@@ -10,6 +10,9 @@ FRAME_SIZE = 10
 INIT_LENGTH = 100
 SEARCH_LENGTH = 250
 
+LOW_PASS = 100
+HIGH_PASS = 4000
+
 if HOP_SIZE > FRAME_SIZE:
     raise ValueError("HOP_SIZE constant must be less than or equals FRAME_SIZE")
 
@@ -20,6 +23,16 @@ def normalize_audio(audio):
 def remove_DC_offset(audio):
     balanced_audio = audio - np.mean(audio)
     return balanced_audio
+
+def filter_audio(audio, sample_rate, low_pass=100, high_pass=4000):
+    freq = np.fft.rfft(audio, len(audio))
+    time = len(audio) / sample_rate
+    low_index = int(np.floor(low_pass * time))
+    high_index = int(np.ceil(high_pass * time))
+    freq[:low_index] = 0
+    freq[high_index:] = 0
+    audio = np.fft.irfft(freq)
+    return audio
 
 def split_into_frames(audio, sample_rate, frame_size, hop_size):
     hop_size_in_samples = floor(sample_rate * hop_size / 1000)
@@ -80,11 +93,11 @@ def get_I1(IMN, IMX):
     return 0.03 * (IMX - IMN) + IMN
 
 def get_I2(IMN):
-    return 5 * IMN
+    return 4 * IMN
 
 def get_energy_thresholds(I1, I2):
     ITL = min(I1, I2)
-    ITU = 5 * ITL
+    ITU = 10 * ITL
     return ITL, ITU
 
 def get_frame_by_energy(energies, ITL, ITU, mode='begin'):
@@ -170,6 +183,7 @@ def process_single_audio(audio, sample_rate, filename):
 
     audio = normalize_audio(audio)
     audio = remove_DC_offset(audio)
+    audio = filter_audio(audio, sample_rate, LOW_PASS, HIGH_PASS)
     frames = split_into_frames(audio, sample_rate, FRAME_SIZE, HOP_SIZE)
     voice_frames = get_voice_frames(frames)
     audio = join_frames(voice_frames, sample_rate, HOP_SIZE)
@@ -178,8 +192,9 @@ def process_single_audio(audio, sample_rate, filename):
     return audio
 
 def process_folder(folder_name):
-    sample_rate, audio = wavfile.read('audio/test4-1channel-32bit-float-44100Hz.wav')
-    audio = process_single_audio(audio, sample_rate, 'test-1channel-32bit-float.wav')
+    # 4-1channel-32bit-float-44100Hz.wav
+    sample_rate, audio = wavfile.read('audio/test.wav')
+    audio = process_single_audio(audio, sample_rate, '')
     # TODO : save numpy array file
     wavfile.write('audio/extracted_command.wav', sample_rate, audio)
 
