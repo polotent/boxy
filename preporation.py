@@ -54,13 +54,13 @@ def join_frames(frames, sample_rate, hop_size):
             audio = np.concatenate((audio, frames[i][:hop_size_in_samples]))
     return audio
 
-def calc_energies(frames):
+def get_energies(frames):
     '''
     Calculates energy for each frame in a frame sequence
     '''
     return np.sum(np.abs(frames), axis=1)
 
-def calc_ZCR(frame):
+def get_ZCR(frame):
     '''
     Calculates zero crossing rate in a single frame
     '''
@@ -74,10 +74,10 @@ def get_init_frames(frames, frame_size, hop_size, init_length):
     init_frames = frames[:n_hops]
     return init_frames
 
-def calc_IZCT(frames, hop_size): 
+def get_IZCT(frames, hop_size): 
     ZCR = list()
     for frame in frames:
-        ZCR.append(calc_ZCR(frame))
+        ZCR.append(get_ZCR(frame))
 
     IZC = np.mean(ZCR)
     IZCT = min((25 / hop_size), IZC * 2 * np.std(ZCR))
@@ -100,7 +100,7 @@ def get_energy_thresholds(I1, I2):
     ITU = 10 * ITL
     return ITL, ITU
 
-def get_frame_by_energy(energies, ITL, ITU, mode='begin'):
+def get_frame_index_by_energy(energies, ITL, ITU, mode='begin'):
     if mode == 'begin':
         frame_index = 0
         start = 0
@@ -112,7 +112,7 @@ def get_frame_by_energy(energies, ITL, ITU, mode='begin'):
         end = -1
         step = -1
     else:
-        raise ValueError("mode argument must be either 'begin' or 'end'.")
+        raise ValueError('get_frame_index_by_energy function \'mode\' argument must be either \'begin\' or \'end\'.')
 
     cross_ITL_flag = False
     for i in range(start, end, step):
@@ -126,12 +126,38 @@ def get_frame_by_energy(energies, ITL, ITU, mode='begin'):
 
     return frame_index
 
-def get_frame_by_ZCR(frames, mode='begin'):
-    pass
+
+def get_frame_index_by_ZCR(frames, hop_size, suggested_frame_index, search_length, IZCT, mode='begin'):
+    search_length_in_frames = int(np.floor(search_length / hop_size))
+    frame_index = suggested_frame_index
+    start = suggested_frame_index
+    if mode == 'begin':
+        step = -1
+        if frame_index - search_length_in_frames < 0:
+            end = -1
+        else:
+            end = frame_index - search_length_in_frames - 1
+    elif mode == 'end':
+        step = 1
+        if frame_index + search_length_in_frames > len(frames) - 1:
+            end = len(frames)
+        else:
+            end = frame_index + search_length_in_frames + 1
+    else:
+        raise ValueError('get_frames_by_ZCR function \'mode\' argument must be either \'begin\' or \'end\'.')
+    
+    IZCT_count = 0
+    for i in range(start, end, step):
+        if get_ZCR(frames[i]) > IZCT:
+            IZCT_count += 1
+        if IZCT_count == 3:
+            frame_index = i
+            return frame_index
+    return frame_index
 
 def get_voice_frames(frames):
     init_frames = get_init_frames(frames, FRAME_SIZE, HOP_SIZE, INIT_LENGTH)
-    energies = calc_energies(frames)
+    energies = get_energies(frames)
 
     IMN = get_IMN(energies)
     IMX = get_IMX(energies)
@@ -140,13 +166,19 @@ def get_voice_frames(frames):
     I2 = get_I2(IMN)
     ITL, ITU = get_energy_thresholds(I1, I2)
     print(ITL, ITU)
-    IZCT = calc_IZCT(init_frames, HOP_SIZE)
+    IZCT = get_IZCT(init_frames, HOP_SIZE)
 
     # development plotting
     plot_energies(energies, ITL, ITU)
     
-    start_frame_index = get_frame_by_energy(energies, ITL, ITU, mode='begin')
-    end_frame_index = get_frame_by_energy(energies, ITL, ITU, mode='end')
+    suggested_start_frame_index = get_frame_index_by_energy(energies, ITL, ITU, mode='begin')
+    suggested_end_frame_index = get_frame_index_by_energy(energies, ITL, ITU, mode='end')
+
+    start_frame_index = get_frame_index_by_ZCR(frames, HOP_SIZE, suggested_start_frame_index, SEARCH_LENGTH, IZCT, mode='begin')
+    end_frame_index = get_frame_index_by_ZCR(frames, HOP_SIZE, suggested_end_frame_index, SEARCH_LENGTH, IZCT, mode='end')
+
+    print('Suggested:', suggested_start_frame_index, suggested_end_frame_index)
+    print('Found:', start_frame_index, end_frame_index)
 
     voice_frames = frames[start_frame_index:end_frame_index]
     return voice_frames
