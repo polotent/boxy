@@ -54,4 +54,4 @@ def mfcc(frames, sample_rate, n_coeffs=13, n_filters=26, low_freq=0, high_freq=N
         frame_cepstral_coeffs = dct(spectrum, norm='ortho')[:n_coeffs]
 
         cepstral_coeffs.append(frame_cepstral_coeffs)
-    return cepstral_coeffs
+    return np.array(cepstral_coeffs)

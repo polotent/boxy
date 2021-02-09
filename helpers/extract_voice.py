@@ -110,7 +110,7 @@ def get_voice_frames(frames, frame_size, hop_size, init_length, search_length):
     I1 = get_I1(IMN, IMX)
     I2 = get_I2(IMN)
     ITL, ITU = get_energy_thresholds(I1, I2)
-    print('ITL:', ITL, 'ITU:', ITU)
+    # print('ITL:', ITL, 'ITU:', ITU)
     IZCT = get_IZCT(init_frames, hop_size)
 
     # development plotting
@@ -122,8 +122,8 @@ def get_voice_frames(frames, frame_size, hop_size, init_length, search_length):
     start_frame_index = get_frame_index_by_ZCR(frames, hop_size, suggested_start_frame_index, search_length, IZCT, mode='begin')
     end_frame_index = get_frame_index_by_ZCR(frames, hop_size, suggested_end_frame_index, search_length, IZCT, mode='end')
 
-    print('Suggested:', suggested_start_frame_index, suggested_end_frame_index)
-    print('Found:', start_frame_index, end_frame_index)
+    # print('Suggested:', suggested_start_frame_index, suggested_end_frame_index)
+    # print('Found:', start_frame_index, end_frame_index)
 
     voice_frames = frames[start_frame_index:end_frame_index]
     return voice_frames

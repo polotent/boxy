@@ -1,4 +1,5 @@
 .vscode
 /literature
-/audio
+/recorded_audio
+/data
 *__pycache__

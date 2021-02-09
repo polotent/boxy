@@ -1,6 +1,8 @@
+import os
 from scipy.io import wavfile
 from python_speech_features import mfcc
 import helpers as hp
+import numpy as np
 
 
 # in ms
@@ -30,15 +32,37 @@ def process_single_audio(audio, sample_rate, filename):
     ### --- python_speech_features version
     coeffs = mfcc(audio, sample_rate, winlen=FRAME_SIZE/1000, winstep=HOP_SIZE/1000) 
     ### ---
-    return coeffs
+    return audio, coeffs
 
-def process_folder(folder_name):
-    # 4-1channel-32bit-float-44100Hz.wav
-    sample_rate, audio = wavfile.read('audio/test.wav')
-    audio = process_single_audio(audio, sample_rate, '')
-    # TODO : save numpy array file
-    wavfile.write('audio/extracted_command.wav', sample_rate, audio)
+def process_folder(folder_path, save_path):
+    if not os.path.isdir(save_path):
+        os.mkdir(save_path)
+
+    files = list()
+    for r, d, f in os.walk(folder_path):
+        for file in f:
+            if ('.wav' in file):
+                rel_dir = os.path.relpath(r, folder_path) if not os.path.relpath(r, folder_path) == '.' else ''
+                files.append([os.path.join(r, file), rel_dir])
+
+    for i in range(len(files)):
+        try:        
+            sample_rate, audio = wavfile.read(files[i][0])
+            audio, coeffs = process_single_audio(audio, sample_rate, files[i][0])
+            
+            # path = os.path.join(save_path, files[i], '_extracted.npy')
+            # np.save(path, coeffs)
+
+            basename = os.path.basename(files[i][0])
+            path = os.path.join(save_path, files[i][1], f'{os.path.splitext(basename)[0]}_extracted.wav')
+            if not os.path.isdir(os.path.dirname(path)):
+                os.mkdir(os.path.dirname(path))
+
+            wavfile.write(path, sample_rate, audio)
+        except Exception as e:
+            print(e) 
 
 
-if __name__ == "__main__":
-    process_folder("here")    
+if __name__ == '__main__':
+    process_folder('D:\\MyFiles\\projects\\boxy\\recorded_audio',
+                   'D:\\MyFiles\\projects\\boxy\\data')    
