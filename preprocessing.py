@@ -1,7 +1,7 @@
 from scipy.io import wavfile
+from python_speech_features import mfcc
 import helpers as hp
 
-# TODO: make a config file for constants and read about config files
 
 # in ms
 HOP_SIZE = 5
@@ -18,17 +18,19 @@ if HOP_SIZE > FRAME_SIZE:
 
 def process_single_audio(audio, sample_rate, filename):
     hp.print_audio_info(audio, sample_rate, filename)
-    hp.plot_audio(audio, sample_rate)
+    # hp.plot_audio(audio, sample_rate)
 
     audio = hp.normalize_audio(audio)
     audio = hp.remove_DC_offset(audio)
-    audio = hp.filter_audio(audio, sample_rate, LOW_PASS, HIGH_PASS)
     frames = hp.split_into_frames(audio, sample_rate, FRAME_SIZE, HOP_SIZE)
     voice_frames = hp.get_voice_frames(frames, FRAME_SIZE, HOP_SIZE, INIT_LENGTH, SEARCH_LENGTH)
+    # coeffs = hp.mfcc(voice_frames, sample_rate, n_coeffs=13, n_filters=26, low_freq=0, high_freq=(sample_rate // 2))    
     audio = hp.join_frames(voice_frames, sample_rate, HOP_SIZE)
-
-    hp.plot_audio(audio, sample_rate)
-    return audio
+    # hp.plot_audio(audio, sample_rate)
+    ### --- python_speech_features version
+    coeffs = mfcc(audio, sample_rate, winlen=FRAME_SIZE/1000, winstep=HOP_SIZE/1000) 
+    ### ---
+    return coeffs
 
 def process_folder(folder_name):
     # 4-1channel-32bit-float-44100Hz.wav

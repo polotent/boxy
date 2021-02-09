@@ -114,7 +114,7 @@ def get_voice_frames(frames, frame_size, hop_size, init_length, search_length):
     IZCT = get_IZCT(init_frames, hop_size)
 
     # development plotting
-    plot_energies(energies, ITL, ITU)
+    # plot_energies(energies, ITL, ITU)
     
     suggested_start_frame_index = get_frame_index_by_energy(energies, ITL, ITU, mode='begin')
     suggested_end_frame_index = get_frame_index_by_energy(energies, ITL, ITU, mode='end')
