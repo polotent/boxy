@@ -1,0 +1,12 @@
+command,number
+back,0
+down,1
+menu,2
+off,3
+on,4
+open,5
+play,6
+power,7
+stop,8
+up,9
+volume,10
