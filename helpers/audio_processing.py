@@ -21,7 +21,7 @@ def split_into_frames(audio, sample_rate, frame_size, hop_size):
 
 def join_frames(frames, sample_rate, hop_size):
     hop_size_in_samples = int(np.floor(sample_rate * hop_size / 1000))
-    audio = list()
+    audio = np.array(list())
     for i in range(len(frames)):
         if i == len(frames) - 1:
             audio = np.concatenate((audio, frames[i]))
