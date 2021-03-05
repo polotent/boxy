@@ -46,8 +46,12 @@ def process_folder(folder_path, commands_path, save_exctracted=False, save_path=
                    generate_report=False, report_path=None):
     if not os.path.isdir(save_path):
         os.mkdir(save_path)
+
+    if not os.path.isdir(report_path):
+        os.mkdir(report_path)
+
     if generate_report:
-        pdf_report = PdfPages(report_path)
+        pdf_report = PdfPages(os.path.join(report_path, 'report.pdf'))
 
     commands = hp.get_commands_dict(commands_path)
 
@@ -106,4 +110,4 @@ if __name__ == '__main__':
                    save_exctracted=False,
                    save_path=os.path.join(curr_dir, 'data'),
                    generate_report=True,
-                   report_path=os.path.join(curr_dir, 'data/report.pdf'))
+                   report_path=os.path.join(curr_dir, 'reports'))
