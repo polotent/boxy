@@ -62,8 +62,8 @@ def process_folder(folder_path, commands_path, save_exctracted=False, save_path=
                 rel_dir = os.path.relpath(r, folder_path) if not os.path.relpath(r, folder_path) == '.' else ''
                 files.append([os.path.join(r, file), rel_dir, file])
 
-    data = np.array(list())
-    labels = np.array(list())
+    data = list()
+    labels = list()
     for i in range(len(files)):
 
         sample_rate, audio = wavfile.read(files[i][0])
@@ -81,8 +81,8 @@ def process_folder(folder_path, commands_path, save_exctracted=False, save_path=
             raise Warning(f'No command \'{command}\' found in commands dict. Passing over')
         else:
             coeffs = hp.unify_coeffs(coeffs, UNIFIED_LENGTH)
-            data = np.append(data, coeffs)
-            labels = np.append(labels, command)
+            data.append(coeffs)
+            labels.append(command)
 
         if save_exctracted:
             basename = os.path.basename(files[i][0])
@@ -95,8 +95,8 @@ def process_folder(folder_path, commands_path, save_exctracted=False, save_path=
         if generate_report:
             hp.save_compare_audio(pdf_report, original, extracted, sample_rate, files[i][0])
 
-    np.save(os.path.join(save_path, 'data.npy'), data)
-    np.save(os.path.join(save_path, 'labels.npy'), labels)
+    np.save(os.path.join(save_path, 'data.npy'), np.array(data))
+    np.save(os.path.join(save_path, 'labels.npy'), np.array(labels))
 
     if generate_report:
         pdf_report.close()
