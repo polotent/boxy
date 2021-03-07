@@ -1,4 +1,6 @@
 .vscode
+.ipynb_checkpoints
+*__pycache__
+
 /literature
 /recorded_audio
-*__pycache__

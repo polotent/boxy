@@ -6,5 +6,7 @@ from .audio_processing import (normalize_audio, remove_DC_offset,
 from .extract_voice import get_voice_frames
 from .mfcc import mfcc
 from .report import save_compare_audio
-from .commands import get_commands_dict
+from .commands import (get_commands_dict, 
+                       get_command_by_num, 
+                       get_num_by_command)
 from .unify_coeffs import unify_coeffs

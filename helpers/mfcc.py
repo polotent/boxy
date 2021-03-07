@@ -13,14 +13,11 @@ def get_nfft(frame_size):
         i *= 2
     return i
 
-def hamming_window(frame):
-    return [(0.53836 - 0.46164 * np.cos(2 * np.pi * i / (len(frame) - 1))) for i in range(len(frame))] 
+def get_magnitude_spectrum(frames, nfft):
+    return np.absolute(np.fft.rfft(frames, nfft))
 
-def get_magnitude_spectrum(frame, nfft):
-    return np.absolute(np.fft.rfft(frame, nfft))
-
-def get_power_spectrum(frame, nfft):
-    return np.square(get_magnitude_spectrum(frame, nfft))
+def get_power_spectrum(frames, nfft):
+    return np.square(get_magnitude_spectrum(frames, nfft))
 
 def get_filters(n_filters, nfft, sample_rate, low_freq, high_freq):
     low_mel = hz_to_mel(low_freq)
@@ -41,17 +38,12 @@ def get_mel_spectrum(spectrum, filters):
     product = np.where(product == 0, np.finfo(float).eps, product) # if feat is zero, we get problems with log
     return product
 
-def mfcc(frames, sample_rate, n_coeffs=13, n_filters=26, low_freq=0, high_freq=None, hamming=True): 
+def mfcc(frames, sample_rate, n_coeffs=13, n_filters=26, low_freq=0, high_freq=None, hamming=True, append_energies=True): 
     high_freq = high_freq or sample_rate // 2
-    cepstral_coeffs = list()
-    for frame in frames:
-        if hamming:
-            frame = hamming_window(frame)
-        nfft = get_nfft(len(frame))
-        spectrum = get_power_spectrum(frame, nfft)
-        filters = get_filters(n_filters, nfft, sample_rate, low_freq, high_freq)
-        spectrum = get_mel_spectrum(spectrum, filters)
-        frame_cepstral_coeffs = dct(spectrum, norm='ortho')[:n_coeffs]
-
-        cepstral_coeffs.append(frame_cepstral_coeffs)
+    nfft = get_nfft(np.shape(frames)[1])
+    power_spectrum = get_power_spectrum(frames, nfft)
+    filters = get_filters(n_filters, nfft, sample_rate, low_freq, high_freq)
+    mel_spectrum = get_mel_spectrum(power_spectrum, filters)
+    mel_spectrum = np.log(mel_spectrum)
+    cepstral_coeffs = dct(mel_spectrum, type=2, axis=1, norm='ortho')[:,:n_coeffs]
     return np.array(cepstral_coeffs)

@@ -1,7 +1,6 @@
 import os
 from scipy.io import wavfile
 from matplotlib.backends.backend_pdf import PdfPages
-# from python_speech_features import mfcc
 import helpers as hp
 import numpy as np
 
@@ -11,18 +10,15 @@ HOP_SIZE = 5
 FRAME_SIZE = 10
 INIT_LENGTH = 100
 SEARCH_LENGTH = 250
-
 # in Hz
 LOW_PASS = 100
 HIGH_PASS = 4000
-
 # in frames
 UNIFIED_LENGTH = 400
 
 
 if HOP_SIZE > FRAME_SIZE:
     raise ValueError('HOP_SIZE constant must be less than or equals FRAME_SIZE')
-
 
 def process_single_audio(audio, sample_rate, filename):
     original = audio
@@ -31,16 +27,12 @@ def process_single_audio(audio, sample_rate, filename):
     audio = hp.normalize_audio(audio)
     audio = hp.remove_DC_offset(audio)
     frames = hp.split_into_frames(audio, sample_rate, FRAME_SIZE, HOP_SIZE)
-    voice_frames = hp.get_voice_frames(frames, FRAME_SIZE, HOP_SIZE, INIT_LENGTH, SEARCH_LENGTH)
-    coeffs = hp.mfcc(voice_frames, sample_rate, n_coeffs=13, n_filters=26, low_freq=0, high_freq=(sample_rate // 2))
-    extracted = hp.join_frames(voice_frames, sample_rate, HOP_SIZE)
-
-    # python_speech_features version
-    # coeffs = mfcc(extracted, sample_rate, winlen=FRAME_SIZE/1000, winstep=HOP_SIZE/1000)
-    # ------------------------------
-
+    voice_frames = hp.get_voice_frames(frames, FRAME_SIZE, HOP_SIZE, 
+                                       INIT_LENGTH, SEARCH_LENGTH)
+    coeffs = hp.mfcc(voice_frames, sample_rate, n_coeffs=13, 
+                     n_filters=26, low_freq=0, high_freq=(sample_rate // 2))
+    extracted = hp.join_frames(voice_frames, sample_rate, HOP_SIZE)    
     return original, extracted, coeffs
-
 
 def process_folder(folder_path, commands_path, save_exctracted=False, save_path=None,
                    generate_report=False, report_path=None):
@@ -53,7 +45,7 @@ def process_folder(folder_path, commands_path, save_exctracted=False, save_path=
     if generate_report:
         pdf_report = PdfPages(os.path.join(report_path, 'report.pdf'))
 
-    commands = hp.get_commands_dict(commands_path)
+    commands, nums = hp.get_commands_dict(commands_path)
 
     files = list()
     for r, d, f in os.walk(folder_path):
