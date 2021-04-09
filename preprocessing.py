@@ -43,7 +43,7 @@ def process_folder(folder_path, commands_path, save_exctracted=False, save_path=
         os.mkdir(report_path)
 
     if generate_report:
-        pdf_report = PdfPages(os.path.join(report_path, 'report.pdf'))
+        report = open(os.path.join(report_path, 'report.txt'), 'w')
 
     commands, nums = hp.get_commands_dict(commands_path)
 
@@ -52,10 +52,9 @@ def process_folder(folder_path, commands_path, save_exctracted=False, save_path=
         for file in f:
             if ('.wav' in file):
                 rel_dir = os.path.relpath(r, folder_path) if not os.path.relpath(r, folder_path) == '.' else ''
-                files.append([os.path.join(r, file), rel_dir, file])
+                speaker_name = rel_dir.split(os.sep)[0]
+                files.append([os.path.join(r, file), rel_dir, file, speaker_name])
 
-    data = list()
-    labels = list()
     for i in range(len(files)):
 
         sample_rate, audio = wavfile.read(files[i][0])
@@ -73,8 +72,6 @@ def process_folder(folder_path, commands_path, save_exctracted=False, save_path=
             raise Warning(f'No command \'{command}\' found in commands dict. Passing over')
         else:
             coeffs = hp.unify_coeffs(coeffs, UNIFIED_LENGTH)
-            data.append(coeffs)
-            labels.append(command)
 
         if save_exctracted:
             basename = os.path.basename(files[i][0])
@@ -85,13 +82,14 @@ def process_folder(folder_path, commands_path, save_exctracted=False, save_path=
             wavfile.write(path, sample_rate, audio)
 
         if generate_report:
-            hp.save_compare_audio(pdf_report, original, extracted, sample_rate, files[i][0])
+            hp.save_compare_audio(report, original, extracted, sample_rate, files[i][0])
 
-    np.save(os.path.join(save_path, 'data.npy'), np.array(data))
-    np.save(os.path.join(save_path, 'labels.npy'), np.array(labels))
+        speaker_name = files[i][3]
+        hp.save_to_datafile(os.path.join(save_path, speaker_name + '_data.npy'), np.array(coeffs))
+        hp.save_to_datafile(os.path.join(save_path, speaker_name + '_labels.npy'), np.array(command))
 
     if generate_report:
-        pdf_report.close()
+        report.close()
 
 
 if __name__ == '__main__':
