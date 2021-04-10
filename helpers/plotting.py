@@ -22,3 +22,23 @@ def plot_energies(energies, ITL, ITU):
     plt.ylabel('sum(|x(n)|) i=0 ... (length(frame)-1)')
     plt.legend() 
     plt.show()
+    
+def plot_metrics(history):
+    fig = plt.figure(figsize=(12, 5))
+
+    fig.add_subplot(121)
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('Loss vs. epochs')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.legend(['Training', 'Validation'])
+
+    fig.add_subplot(122)
+    plt.plot(history.history['accuracy'])
+    plt.plot(history.history['val_accuracy'])
+    plt.title('Accuracy vs. epochs')
+    plt.ylabel('Accuracy')
+    plt.xlabel('Epoch')
+    plt.legend(['Training', 'Validation'])
+    plt.show()
