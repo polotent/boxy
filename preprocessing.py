@@ -4,17 +4,19 @@ from matplotlib.backends.backend_pdf import PdfPages
 import helpers as hp
 import numpy as np
 import logging
+import shutil
 
 
 # in ms
-HOP_SIZE = 5
-FRAME_SIZE = 10
+HOP_SIZE = 10
+FRAME_SIZE = 20
 INIT_LENGTH = 100
 SEARCH_LENGTH = 250
 
 # MFCC
 # in frames
 UNIFIED_LENGTH = 400
+
 N_COEFFS = 13
 N_FILTERS = 26
 
@@ -35,10 +37,11 @@ def process_single_audio(audio, sample_rate, filename):
     extracted = hp.join_frames(voice_frames, sample_rate, HOP_SIZE)
     return original, extracted, coeffs
 
-def process_folder(folder_path, commands_path,
+def process_folder(folder_path, commands_path, dataset_path,
                    generate_report=False, report_path=None):
-    if not os.path.isdir(save_path):
-        os.mkdir(save_path)
+    if os.path.isdir(dataset_path):
+        shutil.rmtree(dataset_path)
+    os.mkdir(dataset_path)
 
     if generate_report:
         if not os.path.isdir(report_path):
@@ -48,42 +51,44 @@ def process_folder(folder_path, commands_path,
 
     commands, nums = hp.get_commands_dict(commands_path)
 
-    files = list()
+    max_extr = 0
     for r, d, f in os.walk(folder_path):
-        for file in f:
-            if ('.wav' in file):
-                rel_dir = os.path.relpath(r, folder_path) if not os.path.relpath(r, folder_path) == '.' else ''
-                speaker_name = rel_dir.split(os.sep)[0]
-                files.append([os.path.join(r, file), rel_dir, file, speaker_name])
+        for filename in f:
+            if ('.wav' in filename):
+                rel_path = os.path.relpath(r, folder_path) if not os.path.relpath(r, folder_path) == '.' else ''
+                speaker_name = rel_path.split(os.sep)[0]
+                abs_file_path = os.path.join(r, filename)
 
-    for i in range(len(files)):
-        sample_rate, audio = wavfile.read(files[i][0])
-        original, extracted, coeffs = process_single_audio(audio, sample_rate, files[i][0])
+                sample_rate, audio = wavfile.read(abs_file_path)
+                original, extracted, coeffs = process_single_audio(audio, sample_rate, abs_file_path)
 
-        splited = files[i][2].split('-')
-        if len(splited) < 2:
-            raise Warning('Invalid filename for extracting command from it. Filename must'
-                             'contain command after record number. E.g. \'0-command-info.wav\'')
-            continue
+                splited = filename.split('-')
+                if len(splited) < 2:
+                    raise Warning('Invalid filename for extracting command from it. Filename must'
+                                    'contain command after record number. E.g. \'0-command-info.wav\'')
+                    continue
 
-        command = splited[1]
+                command = splited[1]
 
-        if command not in commands:
-            raise Warning(f'No command \'{command}\' found in commands dict. Passing over')
-            continue
-        coeffs = hp.unify_coeffs(coeffs, UNIFIED_LENGTH)
+                if command not in commands:
+                    raise Warning(f'No command \'{command}\' found in commands dict. Passing over')
+                    continue
+                if len(coeffs) > max_extr:
+                    max_extr = len(coeffs)
+                coeffs = hp.unify_coeffs(coeffs, UNIFIED_LENGTH)
 
-        if generate_report:
-            hp.save_compare_audio(original, extracted, sample_rate, files[i][0])
+                if generate_report:
+                    hp.save_compare_audio(original, extracted, sample_rate, os.path.join(rel_path, filename))
 
-        speaker_name = files[i][3]
-        hp.save_to_datafile(os.path.join(save_path, speaker_name + '_data.npy'), np.array(coeffs))
-        hp.save_to_datafile(os.path.join(save_path, speaker_name + '_labels.npy'), np.array(command))
-
+                hp.save_to_datafile(os.path.join(dataset_path, speaker_name + '_data.npy'), np.array(coeffs))
+                hp.save_to_datafile(os.path.join(dataset_path, speaker_name + '_labels.npy'), np.array(command))
+    
+    print(max_extr)
 
 if __name__ == '__main__':
     curr_dir = os.path.dirname(os.path.realpath(__file__))
     process_folder(folder_path=os.path.join(curr_dir, 'recorded_audio'),
+                   dataset_path=os.path.join(curr_dir, 'data'),
                    commands_path=os.path.join(curr_dir, 'commands.csv'),
                    generate_report=True,
                    report_path=os.path.join(curr_dir, 'logs'))
