@@ -1,11 +1,9 @@
-from .logging import print_audio_info
 from .plotting import (plot_audio, plot_metrics)
 from .audio_processing import (normalize_audio, remove_DC_offset, 
                                split_into_frames, join_frames)
-
 from .extract_voice import get_voice_frames
 from .mfcc import mfcc
-from .report import save_compare_audio
+from .log import save_compare_audio, print_audio_info
 from .commands import (get_commands_dict, 
                        get_command_by_num, 
                        get_num_by_command)
