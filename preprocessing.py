@@ -51,7 +51,6 @@ def process_folder(folder_path, commands_path, dataset_path,
 
     commands, nums = hp.get_commands_dict(commands_path)
 
-    max_extr = 0
     for r, d, f in os.walk(folder_path):
         for filename in f:
             if ('.wav' in filename):
@@ -63,18 +62,12 @@ def process_folder(folder_path, commands_path, dataset_path,
                 original, extracted, coeffs = process_single_audio(audio, sample_rate, abs_file_path)
 
                 splited = filename.split('-')
-                if len(splited) < 2:
-                    raise Warning('Invalid filename for extracting command from it. Filename must'
-                                    'contain command after record number. E.g. \'0-command-info.wav\'')
-                    continue
-
                 command = splited[1]
 
                 if command not in commands:
                     raise Warning(f'No command \'{command}\' found in commands dict. Passing over')
                     continue
-                if len(coeffs) > max_extr:
-                    max_extr = len(coeffs)
+
                 coeffs = hp.unify_coeffs(coeffs, UNIFIED_LENGTH)
 
                 if generate_report:
@@ -82,8 +75,7 @@ def process_folder(folder_path, commands_path, dataset_path,
 
                 hp.save_to_datafile(os.path.join(dataset_path, speaker_name + '_data.npy'), np.array(coeffs))
                 hp.save_to_datafile(os.path.join(dataset_path, speaker_name + '_labels.npy'), np.array(command))
-    
-    print(max_extr)
+
 
 if __name__ == '__main__':
     curr_dir = os.path.dirname(os.path.realpath(__file__))
