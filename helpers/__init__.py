@@ -9,3 +9,4 @@ from .commands import (get_commands_dict,
                        get_num_by_command)
 from .unify_coeffs import unify_coeffs
 from .datafile import (save_to_datafile, load_from_datafile)
+from .model import (get_model, from_categorical, predict_with_threshold)
