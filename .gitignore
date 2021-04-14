@@ -3,3 +3,7 @@
 *__pycache__
 
 /literature
+/article/*
+!article/article.pdf
+!article/article.tex
+

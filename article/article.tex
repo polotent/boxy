@@ -1,0 +1,85 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+
+\usepackage{setspace}
+\setstretch{1.5}
+
+\usepackage{indentfirst}
+\setlength{\parindent}{1.25cm}
+
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{tocloft}
+\usepackage{hyperref}
+
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+
+\begin{document}
+\newgeometry{left=30mm, top=20mm, right=15mm, bottom=20mm, nohead}
+\begin{titlepage}
+\begin{center}
+Санкт--Петербургский государственный университет \\
+\textbf{Кафедра компьютерного моделирования и многопроцессорных систем}
+\vspace{55mm} \\
+\textbf{\large Мирошниченко Александр Сергеевич} \\[10mm]
+\textbf{\large Разработка системы распознавания речевых команд при помощи методов машинного обучения} \\
+Направление 01.03.02 «Прикладная математика и информатика»\\
+Основная образовательная программа СВ.5005.2017
+«Прикладная математика, фундаментальная информатика и программирование»\\
+Профиль «Исследование и проектирование систем управления\\ и обработки сигналов»\\[30mm]
+\begin{flushright}
+{Научный руководитель,} \\
+кандидат физ.-мат. наук, \\доцент \\Козынченко~В. А. 
+\end{flushright}
+\vfill 
+{Санкт-Петербург}
+\par{2021 г.}
+\end{center}
+\end{titlepage}
+\addtocounter{page}{1}
+
+\tableofcontents
+
+\newpage
+\addcontentsline{toc}{section}{Введение}
+\section*{Введение}
+Какое-то введение \\
+И вот новая строка
+
+\addcontentsline{toc}{section}{Постановка задачи}
+\section*{Постановка задачи}
+
+\addcontentsline{toc}{section}{Метод обучения}
+\section*{Метод обучения}
+
+\addcontentsline{toc}{section}{Подготовка данных для обучения}
+\section*{Подготовка данных для обучения}
+
+\addcontentsline{toc}{section}{Реализация}
+\section*{Реализация}
+
+\addcontentsline{toc}{section}{Заключение}
+\section*{Заключение}
+
+\addcontentsline{toc}{section}{Список литературы}
+\begin{thebibliography}{3}
+\bibitem{Aurélien2019}
+Aurélien G. Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow: Concepts, Tools, and Techniques to Build Intelligent Systems / Aurélien G. --- 2nd Edition --- O'Reilly Media, 2019.
+\bibitem{Kailash2019}
+Kailash A. Generative Adversarial Networks Projects: Build next-generation generative models using TensorFlow and Keras / Kailash A. ---  Packt Publishing, 2019.
+\bibitem{TensorFlowDocs}
+Документация TensorFlow [Электронный ресурс]. –-- Режим доступа: https://www.tensorflow.org/api\_docs/python/tf
+\bibitem{MLportal}
+Портал ML Glossary [Электронный ресурс]. –-- Режим доступа: https://ml-cheatsheet.readthedocs.io
+\bibitem{CourseraCourse}
+Курс на платформе Coursera [Электронный ресурс]. –-- Режим доступа: https://www.coursera.org/learn/getting-started-with-tensor-flow2
+\end{thebibliography}
+
+\addcontentsline{toc}{section}{Приложение: код программы}
+\section*{Приложение: код программы}
+Ссылка на репозиторий c кодом: \url{https://gitlab.com/polotent/boxy}
+\restoregeometry
+
+\end{document}
