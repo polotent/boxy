@@ -26,6 +26,7 @@ def get_class_by_threshold(prediction, num_classes, threshold=0.5):
     return class_num if prediction[class_num] > threshold else num_classes    
 
 def normalize_matrix(matrix):
+    np.seterr(divide='ignore', invalid='ignore')
     return matrix / matrix.sum(axis=1, keepdims=True)
 
 def get_confusion_matrix(labels, predictions, nums, threshold):

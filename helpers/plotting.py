@@ -45,11 +45,11 @@ def plot_metrics(history):
     plt.show()
 
 def plot_confusion_matrix(df_cm):
-    plt.figure(figsize=(20,10))
+    plt.figure(figsize=(12,7))
     cm = np.diag(np.diag(df_cm.corr()))
     
     cm = np.delete(cm, (-1), axis=0)
-    sn.heatmap(df_cm, annot=True, vmin=0.0, vmax=1.0, cmap='gray_r', mask=cm)
+    sn.heatmap(df_cm, annot=True, vmin=0.0, vmax=1.0, cmap='gray_r', linewidths=2, linecolor='black', mask=cm)
     plt.ylabel('predicted')
     plt.xlabel('target')
     plt.show()
