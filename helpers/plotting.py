@@ -50,6 +50,6 @@ def plot_confusion_matrix(df_cm):
     
     cm = np.delete(cm, (-1), axis=0)
     sn.heatmap(df_cm, annot=True, vmin=0.0, vmax=1.0, cmap='gray_r', linewidths=2, linecolor='black', mask=cm)
-    plt.ylabel('predicted')
-    plt.xlabel('target')
+    plt.ylabel('predicted class')
+    plt.xlabel('actual class')
     plt.show()
