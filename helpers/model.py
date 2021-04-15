@@ -3,6 +3,8 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras import regularizers
 from tensorflow.math import confusion_matrix
 import numpy as np
+import pandas as pd
+from helpers import get_commands_list_with_silence
 
 
 def get_model():
@@ -23,7 +25,14 @@ def get_class_by_threshold(prediction, num_classes, threshold=0.5):
     class_num = np.argmax(prediction)
     return class_num if prediction[class_num] > threshold else num_classes    
 
-def get_confusion_matrix(labels, predictions, num_classes, threshold):
+def normalize_matrix(matrix):
+    return matrix / matrix.sum(axis=1, keepdims=True)
+
+def get_confusion_matrix(labels, predictions, nums, threshold):
     labels = [from_categorical(label) for label in labels]
-    predictions = [get_class_by_threshold(prediction, num_classes, threshold=threshold) for prediction in predictions]
-    return confusion_matrix(labels, predictions, num_classes+1)
+    predictions = [get_class_by_threshold(prediction, len(nums), threshold=threshold) for prediction in predictions]
+    conf_matrix = confusion_matrix(labels, predictions, len(nums)+1).numpy()
+    conf_matrix = normalize_matrix(conf_matrix)
+    df = pd.DataFrame(data=conf_matrix, columns=get_commands_list_with_silence(nums), index=get_commands_list_with_silence(nums))
+    df.drop(df.tail(1).index,inplace=True)
+    return df

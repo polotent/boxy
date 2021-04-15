@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sn
 
 def plot_audio(audio, sample_rate):
     length = audio.shape[0] / sample_rate
@@ -41,4 +42,14 @@ def plot_metrics(history):
     plt.ylabel('Accuracy')
     plt.xlabel('Epoch')
     plt.legend(['Training', 'Validation'])
+    plt.show()
+
+def plot_confusion_matrix(df_cm):
+    plt.figure(figsize=(20,10))
+    cm = np.diag(np.diag(df_cm.corr()))
+    
+    cm = np.delete(cm, (-1), axis=0)
+    sn.heatmap(df_cm, annot=True, vmin=0.0, vmax=1.0, cmap='gray_r', mask=cm)
+    plt.ylabel('predicted')
+    plt.xlabel('target')
     plt.show()

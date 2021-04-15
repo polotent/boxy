@@ -1,4 +1,4 @@
-\documentclass[12pt]{article}
+\documentclass[14pt]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[russian]{babel}
@@ -15,6 +15,7 @@
 \usepackage{hyperref}
 
 \renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\contentsname}{\centering Содержание}
 
 \begin{document}
 \newgeometry{left=30mm, top=20mm, right=15mm, bottom=20mm, nohead}
@@ -24,11 +25,10 @@
 \textbf{Кафедра компьютерного моделирования и многопроцессорных систем}
 \vspace{55mm} \\
 \textbf{\large Мирошниченко Александр Сергеевич} \\[10mm]
+\textbf{\large Выпускная квалификационная работа бакалавра} \\[10mm]
 \textbf{\large Разработка системы распознавания речевых команд при помощи методов машинного обучения} \\
-Направление 01.03.02 «Прикладная математика и информатика»\\
-Основная образовательная программа СВ.5005.2017
-«Прикладная математика, фундаментальная информатика и программирование»\\
-Профиль «Исследование и проектирование систем управления\\ и обработки сигналов»\\[30mm]
+Направление 01.03.02 \\
+«Прикладная математика и информатика»\\[30mm]
 \begin{flushright}
 {Научный руководитель,} \\
 кандидат физ.-мат. наук, \\доцент \\Козынченко~В. А. 
@@ -41,8 +41,8 @@
 \addtocounter{page}{1}
 
 \tableofcontents
-
 \newpage
+
 \addcontentsline{toc}{section}{Введение}
 \section*{Введение}
 Какое-то введение \\
@@ -51,14 +51,20 @@
 \addcontentsline{toc}{section}{Постановка задачи}
 \section*{Постановка задачи}
 
-\addcontentsline{toc}{section}{Метод обучения}
-\section*{Метод обучения}
+\addcontentsline{toc}{section}{Обзор литературы}
+\section*{Обзор литературы}
 
-\addcontentsline{toc}{section}{Подготовка данных для обучения}
-\section*{Подготовка данных для обучения}
+\addcontentsline{toc}{section}{Глава 1. Теоретические сведения}
+\section*{Глава 1. Теоретические сведения}
 
-\addcontentsline{toc}{section}{Реализация}
-\section*{Реализация}
+\addcontentsline{toc}{section}{Глава 2. Описание решения}
+\section*{Глава 2. Описание решения}
+
+\addcontentsline{toc}{section}{Глава 3. Результаты вычислений}
+\section*{Глава 3. Результаты вычислений}
+
+\addcontentsline{toc}{section}{Выводы}
+\section*{Выводы}
 
 \addcontentsline{toc}{section}{Заключение}
 \section*{Заключение}
@@ -70,15 +76,15 @@ Aurélien G. Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow:
 \bibitem{Kailash2019}
 Kailash A. Generative Adversarial Networks Projects: Build next-generation generative models using TensorFlow and Keras / Kailash A. ---  Packt Publishing, 2019.
 \bibitem{TensorFlowDocs}
-Документация TensorFlow [Электронный ресурс]. –-- Режим доступа: https://www.tensorflow.org/api\_docs/python/tf
+Документация TensorFlow [Электронный ресурс]. --- Режим доступа: https://www.tensorflow.org/api\_docs/python/tf
 \bibitem{MLportal}
-Портал ML Glossary [Электронный ресурс]. –-- Режим доступа: https://ml-cheatsheet.readthedocs.io
+Портал ML Glossary [Электронный ресурс]. --- Режим доступа: https://ml-cheatsheet.readthedocs.io
 \bibitem{CourseraCourse}
-Курс на платформе Coursera [Электронный ресурс]. –-- Режим доступа: https://www.coursera.org/learn/getting-started-with-tensor-flow2
+Курс на платформе Coursera [Электронный ресурс]. --- Режим доступа: https://www.coursera.org/learn/getting-started-with-tensor-flow2
 \end{thebibliography}
 
-\addcontentsline{toc}{section}{Приложение: код программы}
-\section*{Приложение: код программы}
+\addcontentsline{toc}{section}{Приложение}
+\section*{Приложение}
 Ссылка на репозиторий c кодом: \url{https://gitlab.com/polotent/boxy}
 \restoregeometry
 

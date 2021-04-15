@@ -1,4 +1,6 @@
-from .plotting import (plot_audio, plot_metrics)
+from .plotting import (plot_audio,
+                       plot_metrics,
+                       plot_confusion_matrix)
 from .audio_processing import (normalize_audio, remove_DC_offset,
                                split_into_frames, join_frames)
 from .extract_voice import get_voice_frames
