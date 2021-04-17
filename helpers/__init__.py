@@ -13,7 +13,8 @@ from .commands import (get_commands_dict,
                        get_num_by_command)
 from .unify_coeffs import unify_coeffs
 from .datafile import (save_to_datafile, load_from_datafile)
-from .model import (get_model,
+from .model import (get_mlp_model,
+                    get_cnn_model,
                     from_categorical,
                     get_class_by_threshold,
                     get_confusion_matrix)
