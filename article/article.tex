@@ -13,9 +13,13 @@
 \usepackage{graphicx}
 \usepackage{tocloft}
 \usepackage{hyperref}
+\usepackage{enumitem}
 
 \renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
 \renewcommand{\contentsname}{\centering Содержание}
+
+\renewcommand{\contentsname}{\hfill\bfseries\Large Contents\hfill}   
+\renewcommand{\cftaftertoctitle}{\hfill}
 
 \begin{document}
 \newgeometry{left=30mm, top=20mm, right=15mm, bottom=20mm, nohead}
@@ -45,8 +49,7 @@
 
 \addcontentsline{toc}{section}{Введение}
 \section*{Введение}
-Какое-то введение \\
-И вот новая строка
+
 
 \addcontentsline{toc}{section}{Постановка задачи}
 \section*{Постановка задачи}
@@ -62,12 +65,52 @@
 
 \addcontentsline{toc}{section}{Глава 3. Результаты вычислений}
 \section*{Глава 3. Результаты вычислений}
+Было проведено 3 вычислительных эксперемента для каждого из 2-х типов нейронной сети: MLP и CNN. Структуры приведены на рис 1,2
+
+Датасет состоит из 6 дикторов. Каждый диктор работал с 11 командами : 'back', 'down', 'menu', 'off', 'on', 'open', 'play', 'power', 'stop', 'up', 'volume'.
+\\
+
+\begin{tabular}[c]{ | p{2cm} | p{2cm} | p{3cm} | p{3cm} | }
+\hline
+Диктор & Тип голоса & Кол-во звук. дорожек на каждую команду & Сумм. кол-во звук. дорожек  \\ \hline
+speaker1 & Мужской & 50 & 550 \\ \hline
+speaker2 & Мужской & 40 & 440 \\ \hline
+speaker3 & Мужской & 40 & 440 \\ \hline
+speaker4 & Мужской & 40 & 440 \\ \hline
+speaker5 & Мужской & 50 & 550 \\ \hline
+speaker6 & Женский & 50 & 550 \\ \hline
+\end{tabular}
+\\
+
+Первый эксперимент: нейронная сеть обучается на первом дикторе с мужским голосом, тестирование производится на каждом дикторе. 
+
+Второй эксперимент: нейронная сеть обучается на всех дикторах с мужским голосом, тестирование производится на каждом дикторе. 
+
+Третий эксперимент: нейронная сеть обучается на всех дикторах, тестирование производится на каждом дикторе.
+
+Датасет предварительно разделяется на тренировочную и тестовую части. На тренировочную часть отводится 70\% данных диктора, на тестовую часть - 30\%. В процессе тренировки после каждой эпохи тренировочные данные перемешиваются. 15\% тренировочных данных в каждой эпохе - валидационныы.
+
+В конце каждого эксперимента помимо тестирования производится построение матрицы ошибок (confusion matrix) для каждого диктора и для каждого из четырех пороговых значений: 0.5, 0.6, 0.7, 0.8.
+
+Графики обучения для каждого из экспериментов приведены на рисунках.
+\\
+
+Таблица с результатам
 
 \addcontentsline{toc}{section}{Выводы}
 \section*{Выводы}
+\newpage
 
 \addcontentsline{toc}{section}{Заключение}
 \section*{Заключение}
+В данной работе:
+\begin{itemize}[leftmargin=2cm]
+\item Проведена предобработка звуковых дорожек, содержащих команды
+\item Разработан алгоритм распознавания речевых команд
+\item Реализован алгоритм распознавания речевых команд
+\item Проведены вычислительные эксперименты, в результате которых	 показана работоспособность и эффективность работы алгоритма распознавания речевых команд.
+\end{itemize}
+\newpage
 
 \addcontentsline{toc}{section}{Список литературы}
 \begin{thebibliography}{3}
@@ -82,6 +125,7 @@ Kailash A. Generative Adversarial Networks Projects: Build next-generation gener
 \bibitem{CourseraCourse}
 Курс на платформе Coursera [Электронный ресурс]. --- Режим доступа: https://www.coursera.org/learn/getting-started-with-tensor-flow2
 \end{thebibliography}
+\newpage
 
 \addcontentsline{toc}{section}{Приложение}
 \section*{Приложение}

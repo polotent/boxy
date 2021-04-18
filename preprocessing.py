@@ -51,6 +51,7 @@ def process_folder(folder_path, commands_path, dataset_path,
 
     commands, nums = hp.get_commands_dict(commands_path)
 
+    max_len_in_frames = 0
     for r, d, f in os.walk(folder_path):
         for filename in f:
             if ('.wav' in filename):
@@ -68,6 +69,8 @@ def process_folder(folder_path, commands_path, dataset_path,
                     raise Warning(f'No command \'{command}\' found in commands dict. Passing over')
                     continue
 
+                if len(coeffs) > max_len_in_frames:
+                    max_len_in_frames = len(coeffs)
                 coeffs = hp.unify_coeffs(coeffs, UNIFIED_LENGTH)
 
                 if generate_report:
@@ -75,7 +78,10 @@ def process_folder(folder_path, commands_path, dataset_path,
 
                 hp.save_to_datafile(os.path.join(dataset_path, speaker_name + '_data.npy'), np.array(coeffs))
                 hp.save_to_datafile(os.path.join(dataset_path, speaker_name + '_labels.npy'), np.array(command))
-
+    
+    if generate_report:
+        hp.save_max_len_in_frames(max_len_in_frames)
+        hp.log_finish()
 
 if __name__ == '__main__':
     curr_dir = os.path.dirname(os.path.realpath(__file__))
