@@ -83,6 +83,7 @@ def process_folder(folder_path, commands_path, dataset_path,
         hp.save_max_len_in_frames(max_len_in_frames)
         hp.log_finish()
 
+
 if __name__ == '__main__':
     curr_dir = os.path.dirname(os.path.realpath(__file__))
     process_folder(folder_path=os.path.join(curr_dir, 'recorded_audio'),

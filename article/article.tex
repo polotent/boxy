@@ -14,12 +14,7 @@
 \usepackage{tocloft}
 \usepackage{hyperref}
 \usepackage{enumitem}
-
-\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
-\renewcommand{\contentsname}{\centering Содержание}
-
-\renewcommand{\contentsname}{\hfill\bfseries\Large Contents\hfill}   
-\renewcommand{\cftaftertoctitle}{\hfill}
+\usepackage{csvsimple}
 
 \begin{document}
 \newgeometry{left=30mm, top=20mm, right=15mm, bottom=20mm, nohead}
@@ -49,19 +44,24 @@
 
 \addcontentsline{toc}{section}{Введение}
 \section*{Введение}
+\newpage
 
 
 \addcontentsline{toc}{section}{Постановка задачи}
 \section*{Постановка задачи}
+\newpage
 
 \addcontentsline{toc}{section}{Обзор литературы}
 \section*{Обзор литературы}
+\newpage
 
 \addcontentsline{toc}{section}{Глава 1. Теоретические сведения}
 \section*{Глава 1. Теоретические сведения}
+\newpage
 
 \addcontentsline{toc}{section}{Глава 2. Описание решения}
 \section*{Глава 2. Описание решения}
+\newpage
 
 \addcontentsline{toc}{section}{Глава 3. Результаты вычислений}
 \section*{Глава 3. Результаты вычислений}
@@ -70,14 +70,14 @@
 Датасет состоит из 6 дикторов. Каждый диктор работал с 11 командами : 'back', 'down', 'menu', 'off', 'on', 'open', 'play', 'power', 'stop', 'up', 'volume'.
 \\
 
-\begin{tabular}[c]{ | p{2cm} | p{2cm} | p{3cm} | p{3cm} | }
+\begin{tabular}[c]{ | p{2cm} | p{2cm} | p{6cm} | p{4cm} | }
 \hline
 Диктор & Тип голоса & Кол-во звук. дорожек на каждую команду & Сумм. кол-во звук. дорожек  \\ \hline
-speaker1 & Мужской & 50 & 550 \\ \hline
-speaker2 & Мужской & 40 & 440 \\ \hline
-speaker3 & Мужской & 40 & 440 \\ \hline
-speaker4 & Мужской & 40 & 440 \\ \hline
-speaker5 & Мужской & 50 & 550 \\ \hline
+speaker1 & Мужской & 50 & 550 \\
+speaker2 & Мужской & 40 & 440 \\
+speaker3 & Мужской & 40 & 440 \\
+speaker4 & Мужской & 40 & 440 \\
+speaker5 & Мужской & 50 & 550 \\
 speaker6 & Женский & 50 & 550 \\ \hline
 \end{tabular}
 \\
@@ -88,14 +88,26 @@ speaker6 & Женский & 50 & 550 \\ \hline
 
 Третий эксперимент: нейронная сеть обучается на всех дикторах, тестирование производится на каждом дикторе.
 
-Датасет предварительно разделяется на тренировочную и тестовую части. На тренировочную часть отводится 70\% данных диктора, на тестовую часть - 30\%. В процессе тренировки после каждой эпохи тренировочные данные перемешиваются. 15\% тренировочных данных в каждой эпохе - валидационныы.
-
-В конце каждого эксперимента помимо тестирования производится построение матрицы ошибок (confusion matrix) для каждого диктора и для каждого из четырех пороговых значений: 0.5, 0.6, 0.7, 0.8.
+Датасет предварительно разделяется на тренировочную и тестовую части. На тренировочную часть отводится 70\% данных диктора, на тестовую часть - 30\%. В процессе тренировки после каждой эпохи тренировочные данные перемешиваются. 15\% тренировочных данных в каждой эпохе - валидационные. В качестве метрики для оценки эффективности была выбрана метрика точности (accuracy), а для валидации - функция потерь категориальной кросс-энтропии (val\_loss). Алгоритм оптимизации - Adam. Максимальное количество эпох - 50. Если значение метрики val\_loss не уменьшается в течение 20 эпох, то обучение останавливается.
 
 Графики обучения для каждого из экспериментов приведены на рисунках.
+
+В конце каждого эксперимента помимо тестирования производится построение матрицы ошибок (confusion matrix) для каждого диктора и для каждого из четырех пороговых значений: 0.5, 0.6, 0.7, 0.8.
 \\
 
-Таблица с результатам
+\begin{table}
+\centering
+\csvautotabular[respect underscore=true]{test_summary.csv}
+\caption{Результаты вычислений}
+\end{table}
+
+
+all\_speakers = [speaker1, speaker2, speaker3, speaker4, speaker5, speaker6]
+
+all\_male\_speakers = [speaker1, speaker2, speaker3, speaker4, speaker5]
+
+\newpage
+
 
 \addcontentsline{toc}{section}{Выводы}
 \section*{Выводы}

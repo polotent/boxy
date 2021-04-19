@@ -44,12 +44,16 @@ def plot_metrics(history):
     plt.legend(['Training', 'Validation'])
     plt.show()
 
-def plot_confusion_matrix(df_cm):
-    plt.figure(figsize=(12,7))
-    cm = np.diag(np.diag(df_cm.corr()))
+def plot_confusion_matrix(df_cm_arr):
+    fig, ax = plt.subplots(nrows=len(df_cm_arr) // 2, ncols=2, figsize=(20,10))
+    for i, df_cm in enumerate(df_cm_arr):
+        cm = np.diag(np.diag(df_cm['cm'].corr()))
+        cm = np.delete(cm, (-1), axis=0)
+        cbar = (i == len(df_cm_arr))
+        sn.heatmap(df_cm['cm'], annot=True, vmin=0.0, vmax=1.0, cmap='gray_r', cbar=cbar, linewidths=2, linecolor='black', mask=cm, ax=ax[i//2,i%2])
+        ax[i//2,i%2].set_title(f'Threshold: {df_cm["threshold"]}')
     
-    cm = np.delete(cm, (-1), axis=0)
-    sn.heatmap(df_cm, annot=True, vmin=0.0, vmax=1.0, cmap='gray_r', linewidths=2, linecolor='black', mask=cm)
-    plt.ylabel('predicted class')
-    plt.xlabel('actual class')
+    # sn.heatmap(df_cm, annot=True, vmin=0.0, vmax=1.0, cmap='gray_r', linewidths=2, linecolor='black', mask=cm)
+        ax[i//2,i%2].set_ylabel('predicted class')
+        ax[i//2,i%2].set_xlabel('actual class')
     plt.show()
