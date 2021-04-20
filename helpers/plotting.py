@@ -44,8 +44,9 @@ def plot_metrics(history):
     plt.legend(['Training', 'Validation'])
     plt.show()
 
-def plot_confusion_matrix(df_cm_arr):
-    fig, ax = plt.subplots(nrows=len(df_cm_arr) // 2, ncols=2, figsize=(20,10))
+def plot_confusion_matrix(df_cm_arr, save_path=None):
+    fig, ax = plt.subplots(nrows=len(df_cm_arr) // 2, ncols=2, figsize=(17,10))
+    plt.subplots_adjust(wspace=0.1, hspace=0.35)
     for i, df_cm in enumerate(df_cm_arr):
         cm = np.diag(np.diag(df_cm['cm'].corr()))
         cm = np.delete(cm, (-1), axis=0)
@@ -53,4 +54,6 @@ def plot_confusion_matrix(df_cm_arr):
         ax[i//2,i%2].set_title(f'Threshold: {df_cm["threshold"]}')
         ax[i//2,i%2].set_ylabel('predicted class')
         ax[i//2,i%2].set_xlabel('actual class')
+    if save_path:
+        plt.savefig(save_path)
     plt.show()    

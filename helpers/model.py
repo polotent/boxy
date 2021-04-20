@@ -47,6 +47,11 @@ def get_confusion_matrix(labels, predictions, nums, threshold):
     predictions = [get_class_by_threshold(prediction, len(nums), threshold=threshold) for prediction in predictions]
     conf_matrix = confusion_matrix(labels, predictions, len(nums)+1).numpy()
     conf_matrix = normalize_matrix(conf_matrix)
+
+    precision = np.diag(conf_matrix) / np.sum(conf_matrix, axis=1)
+    metrics = dict()
+    metrics[f'precision_for_threshold={threshold}'] = [round(el,3) for el in precision]
+    
     df = pd.DataFrame(data=conf_matrix, columns=get_commands_list_with_silence(nums), index=get_commands_list_with_silence(nums))
     df.drop(df.tail(1).index,inplace=True)
-    return df
+    return df, metrics

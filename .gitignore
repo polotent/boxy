@@ -4,6 +4,8 @@
 
 /literature
 /article/*
+!article/img/
 !article/article.pdf
 !article/article.tex
+!article/test_summary.csv
 
