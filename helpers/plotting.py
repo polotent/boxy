@@ -24,7 +24,7 @@ def plot_energies(energies, ITL, ITU):
     plt.legend() 
     plt.show()
     
-def plot_metrics(history):
+def plot_metrics(history, save_path=None):
     fig = plt.figure(figsize=(12, 5))
 
     fig.add_subplot(121)
@@ -42,6 +42,9 @@ def plot_metrics(history):
     plt.ylabel('Accuracy')
     plt.xlabel('Epoch')
     plt.legend(['Training', 'Validation'])
+    
+    if save_path:
+        plt.savefig(save_path)
     plt.show()
 
 def plot_confusion_matrix(df_cm_arr, save_path=None):
