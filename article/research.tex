@@ -20,6 +20,7 @@
 \graphicspath{ {./img/} }
 
 \renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\addto\captionsrussian{\def\refname{Список использованных источников}}
 
 \begin{document}
 \newgeometry{left=30mm, top=20mm, right=15mm, bottom=20mm, nohead}
@@ -54,7 +55,7 @@
 
 \addcontentsline{toc}{section}{Постановка задачи}
 \section*{Постановка задачи}
-Была поставлена задача создания алгоритма распознавания звуковых команд в виде отдельных слов при помощи нейронной сети.
+Разработать и запрограммировать алгоритм распознавания звуковых команд в виде отдельных слов при помощи нейронной сети.
 
 \section*{Выбор инструментов для решения задачи}
 Для решения задачи был выбран язык программирования Python 3.8. Предобработку данных было решено реализовывать при помощи Python 3.8.
@@ -65,7 +66,7 @@
 
 \addcontentsline{toc}{section}{Результаты вычислений}
 \section*{Результаты вычислений}
-Было проведено 3 вычислительных эксперемента для нейронной сети типа CNN. Структура сети приведена на рисунке \ref{fig:cnn_model}.
+Было проведено 3 вычислительных эксперимента для нейронной сети типа CNN. Структура сети приведена на рисунке \ref{fig:cnn_model}.
 
 \begin{figure}[H]
   \[\includegraphics[scale=0.4]{cnn_model.png}\]
@@ -101,6 +102,11 @@ speaker6 & Женский & 50 & 550 \\ \hline
 
 Графики обучения для каждого из экспериментов приведены на рисунках \ref{fig:cnn_speaker1_train_graphs}, \ref{fig:cnn_all_male_speakers_train_graphs}, \ref{fig:cnn_all_speakers_train_graphs}.
 
+В конце каждого эксперимента проводится тестирование нейронной сети.
+А в случае обучения на all\_speakers помимо тестирования производится построение матрицы ошибок (confusion matrix) для каждого диктора и для каждого из четырех пороговых значений: 0.5, 0.6, 0.7, 0.8. Матрицы представлены на рисунке \ref{fig:cnn_cm_all_speakers}.
+
+Результаты тестирования представлены в таблице \ref{table:test_summary}. Обозначения, которые используются:
+
 all\_speakers = [speaker1, speaker2, speaker3, speaker4, speaker5, speaker6]
 
 all\_male\_speakers = [speaker1, speaker2, speaker3, speaker4, speaker5]
@@ -123,18 +129,25 @@ all\_male\_speakers = [speaker1, speaker2, speaker3, speaker4, speaker5]
   \label{fig:cnn_all_speakers_train_graphs}
 \end{figure}
 
-В конце эксперимента помимо тестирования производится построение матрицы ошибок (confusion matrix) для каждого диктора и для каждого из четырех пороговых значений: 0.5, 0.6, 0.7, 0.8.
-\\
 
 \begin{table}
 \centering
 \csvautotabular[respect underscore=true]{test_summary.csv}
 \caption{Результаты вычислений}
+\label{table:test_summary}
 \end{table}
 
+\begin{figure}[H]
+  \[\includegraphics[scale=0.4]{cnn_cm_all_speakers.png}\]
+  \caption{Матрицы ошибок для случая обучения на all\_speakers}
+  \label{fig:cnn_cm_all_speakers}
+\end{figure}
 
-\newpage
+Видно, что при обучении только на одном дикторе, распознавание на всех остальных работает плохо. 
 
+При обучении только на мужских голосах, распознавание на женском работает лучше, чем при обучении на одном, но все-равно очень плохо.
+
+При обучении на всех голосах, распознавание на каждом голосе дает приемлемую точность. Однако стоит отметить, что если большая часть голосов в тренировочной части - мужские, то на женском голосе распознавание будет работать хуже, чем на мужских.
 
 \addcontentsline{toc}{section}{Заключение}
 \section*{Заключение}
