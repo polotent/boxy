@@ -3,15 +3,8 @@
 *__pycache__
 
 /literature
-/article/*
-!article/img/
-!article/article.pdf
-!article/article.tex
-!article/research.pdf
-!article/research.tex
-!article/Отзыв_руководителя_по_практике(заполненный).docx
-!article/Отзыв_руководителя_по_практике(заполненный).pdf
-!article/отзыв Мирошниченко.pdf
-!article/титульник Мирошниченко.pdf
-!article/test_summary.csv
-
+/article/article.aux
+/article/article.log
+/article/article.synctex.gz
+/article/article.toc
+/article/article.out

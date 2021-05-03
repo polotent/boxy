@@ -1,0 +1,54 @@
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage[russian]{babel}
+\renewcommand{\rmdefault}{Tempora-TLF}
+
+% Line spacing
+\usepackage{setspace}
+\setstretch{1.5}
+
+% Paragraph indent
+\usepackage{indentfirst}
+\setlength\parindent{1.25cm}
+
+\usepackage{float}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{tocloft}
+\usepackage[colorlinks=false,unicode=true]{hyperref}
+\usepackage{enumitem}
+\usepackage{csvsimple}
+% Images directory
+\graphicspath{ {./img/} }
+% Command for special section
+\newcommand{\specialsection}[1]{
+     \phantomsection
+     \bigskip\smallskip\hspace{-13.8mm}
+     \normalfont\fontsize{18}{18}\textbf{#1}
+     \par\bigskip\normalfont\normalsize
+     \addcontentsline{toc}{section}{#1}
+}
+
+\usepackage{titlesec}
+\titleformat{\section}
+{\fontsize{18}{18}\bfseries}{
+\hspace{-1.5mm}Глава \thesection. \hskip-1em}{1em}{}
+\titleformat{\subsection}
+{\fontsize{16}{16}\bfseries}{\hspace{-0.2mm}\thesubsection}{1em}{}
+% Special section prefix
+\renewcommand{\cfttoctitlefont}{\bfseries\Large}
+\renewcommand{\cftbeforetoctitleskip}{-1em}
+\renewcommand{\cftsecpresnum}{Глава\space}
+% Contents
+\newlength\mylength
+\settowidth\mylength{\cftsecpresnum}
+\addtolength\cftsecnumwidth{\mylength}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsecaftersnum}{.}
+\renewcommand{\cftsubsecaftersnum}{.}
+\addto\captionsrussian{\def\refname{Список использованных источников}}
+\setlength{\cftsubsecindent}{2.68em}
+\setlength{\cftbeforesecskip}{4pt}
+\renewcommand{\cftsecpagefont}{\normalfont}
+
+\usepackage[font=small,labelfont=bf]{caption}
