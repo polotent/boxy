@@ -27,7 +27,7 @@ def get_IZCT(frames, hop_size):
         ZCR.append(get_ZCR(frame))
 
     IZC = np.mean(ZCR)
-    IZCT = min((25 / hop_size), IZC * 2 * np.std(ZCR))
+    IZCT = min((25 / hop_size), IZC + 2 * np.std(ZCR))
     return IZCT
 
 def get_IMX(energies):
