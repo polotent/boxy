@@ -59,4 +59,25 @@ def plot_confusion_matrix(df_cm_arr, save_path=None):
         ax[i//2,i%2].set_xlabel('actual class')
     if save_path:
         plt.savefig(save_path)
-    plt.show()    
+    plt.show()
+
+def plot_mel_hz(x, f):
+    plt.rcParams.update({'font.size': 22})
+    plt.plot(x, f)
+    plt.xlim(xmin=0, xmax=10000)
+    plt.ylim(ymin=0, ymax=3200)
+    plt.grid(color='grey', linestyle='dashed', linewidth=1)
+    plt.xticks([0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000])
+    plt.xlabel('Hz')
+    plt.ylabel('Mel')
+    plt.show()
+
+def plot_mel_filters(filters, low_hz, high_hz):
+    plt.rcParams.update({'font.size': 22})
+    for filter in filters:
+        plt.plot(np.linspace(low_hz, high_hz, filters.shape[1]), filter)
+    plt.xlim(xmin=0)
+    plt.ylim(ymin=0)
+    plt.grid(color='grey', linestyle='dashed', linewidth=1)
+    plt.xlabel('Hz')
+    plt.show()

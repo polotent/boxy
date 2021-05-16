@@ -24,7 +24,6 @@ def get_filters(n_filters, nfft, sample_rate, low_freq, high_freq):
     high_mel = hz_to_mel(high_freq)
     mel_points = np.linspace(low_mel, high_mel, n_filters+2)
     spectrum_bin = np.floor((nfft+1) / sample_rate * mel_to_hz(mel_points))
-
     filters = np.zeros([n_filters, nfft//2+1])
     for j in range(0, n_filters):
         for i in range(int(spectrum_bin[j]), int(spectrum_bin[j+1])):
@@ -38,7 +37,7 @@ def get_mel_spectrum(spectrum, filters):
     product = np.where(product == 0, np.finfo(float).eps, product) # if feat is zero, we get problems with log
     return product
 
-def mfcc(frames, sample_rate, n_coeffs=13, n_filters=26, low_freq=0, high_freq=None, hamming=True, append_energies=True): 
+def mfcc(frames, sample_rate, n_coeffs=13, n_filters=26, low_freq=0, high_freq=None): 
     high_freq = high_freq or sample_rate // 2
     nfft = get_nfft(np.shape(frames)[1])
     power_spectrum = get_power_spectrum(frames, nfft)

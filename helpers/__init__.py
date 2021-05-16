@@ -1,10 +1,15 @@
 from .plotting import (plot_audio,
                        plot_metrics,
-                       plot_confusion_matrix)
+                       plot_confusion_matrix,
+                       plot_mel_hz,
+                       plot_mel_filters)
 from .audio_processing import (normalize_audio, remove_DC_offset,
                                split_into_frames, join_frames)
 from .extract_voice import get_voice_frames
-from .mfcc import mfcc
+from .mfcc import (mfcc,
+                   hz_to_mel,
+                   mel_to_hz,
+                   get_filters)
 from .log import (save_compare_audio,
                   print_audio_info,
                   save_max_len_in_frames,
