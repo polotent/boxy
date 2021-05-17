@@ -64,12 +64,14 @@ def plot_confusion_matrix(df_cm_arr, save_path=None):
 def plot_mel_hz(x, f):
     plt.rcParams.update({'font.size': 22})
     plt.plot(x, f)
-    plt.xlim(xmin=0, xmax=10000)
-    plt.ylim(ymin=0, ymax=3200)
+    plt.xlim(xmin=0, xmax=22050)
+    plt.ylim(ymin=0, ymax=4000)
     plt.grid(color='grey', linestyle='dashed', linewidth=1)
-    plt.xticks([0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000])
-    plt.xlabel('Hz')
-    plt.ylabel('Mel')
+    plt.xticks([0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000,
+                11000, 12000, 13000, 14000, 15000, 16000, 17000, 18000, 19000, 20000],
+               [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20])
+    plt.xlabel('Частота, кГц')
+    plt.ylabel('Частота, Мел')
     plt.show()
 
 def plot_mel_filters(filters, low_hz, high_hz):
@@ -79,5 +81,6 @@ def plot_mel_filters(filters, low_hz, high_hz):
     plt.xlim(xmin=0)
     plt.ylim(ymin=0)
     plt.grid(color='grey', linestyle='dashed', linewidth=1)
-    plt.xlabel('Hz')
+    plt.xlabel('Частота, Гц')
+    plt.ylabel('Значения функции H')
     plt.show()
