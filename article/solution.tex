@@ -101,7 +101,23 @@ E_k = \sum_{m=0}^{N-1} |x_{k_m}|,~k=\overline{0,z-1}
 
 	\item Привести матрицы коэффициентов MFCC каждой звуковой дорожки к одной размерности. Для этого дополнить их нулями слева до необходимой длины. Унифицированная размерность матриц выбирается как максимальная среди всех.
 \end{enumerate}
-  
+ 
+% Need to translate
+Why do we do these things?
+
+We will now go a little more slowly through the steps and explain why each of the steps is necessary.
+
+An audio signal is constantly changing, so to simplify things we assume that on short time scales the audio signal doesn't change much (when we say it doesn't change, we mean statistically i.e. statistically stationary, obviously the samples are constantly changing on even short time scales). This is why we frame the signal into 20-40ms frames. If the frame is much shorter we don't have enough samples to get a reliable spectral estimate, if it is longer the signal changes too much throughout the frame.
+
+The next step is to calculate the power spectrum of each frame. This is motivated by the human cochlea (an organ in the ear) which vibrates at different spots depending on the frequency of the incoming sounds. Depending on the location in the cochlea that vibrates (which wobbles small hairs), different nerves fire informing the brain that certain frequencies are present. Our periodogram estimate performs a similar job for us, identifying which frequencies are present in the frame.
+
+The periodogram spectral estimate still contains a lot of information not required for Automatic Speech Recognition (ASR). In particular the cochlea can not discern the difference between two closely spaced frequencies. This effect becomes more pronounced as the frequencies increase. For this reason we take clumps of periodogram bins and sum them up to get an idea of how much energy exists in various frequency regions. This is performed by our Mel filterbank: the first filter is very narrow and gives an indication of how much energy exists near 0 Hertz. As the frequencies get higher our filters get wider as we become less concerned about variations. We are only interested in roughly how much energy occurs at each spot. The Mel scale tells us exactly how to space our filterbanks and how wide to make them. See below for how to calculate the spacing.
+
+Once we have the filterbank energies, we take the logarithm of them. This is also motivated by human hearing: we don't hear loudness on a linear scale. Generally to double the percieved volume of a sound we need to put 8 times as much energy into it. This means that large variations in energy may not sound all that different if the sound is loud to begin with. This compression operation makes our features match more closely what humans actually hear. Why the logarithm and not a cube root? The logarithm allows us to use cepstral mean subtraction, which is a channel normalisation technique.
+
+The final step is to compute the DCT of the log filterbank energies. There are 2 main reasons this is performed. Because our filterbanks are all overlapping, the filterbank energies are quite correlated with each other. The DCT decorrelates the energies which means diagonal covariance matrices can be used to model the features in e.g. a HMM classifier. But notice that only 12 of the 26 DCT coefficients are kept. This is because the higher DCT coefficients represent fast changes in the filterbank energies and it turns out that these fast changes actually degrade ASR performance, so we get a small improvement by dropping them.  
+% Need to translate
+ 
 Так как на выходе алгоритма выделения начальной и конечной точек слова получается набор фреймов, то шаг разбиения сигнала на фреймы опускается.
 
 \subsubsection{Получение спектра сигнала}
@@ -153,11 +169,11 @@ E_k = \sum_{m=0}^{N-1} |x_{k_m}|,~k=\overline{0,z-1}
 \end{figure}
 
 \subsubsection{Получение кепстра сигнала}
-Кепстр -  определяется в виде обратного преобразования Фурье от логарифма спектра мощности сигнала:
+Кепстр -  определяется в виде прямого преобразования Фурье от логарифма спектра мощности сигнала:
 \begin{equation}
-	C(x(t))=F^{-1}(ln[F(x[t])])
+	C(x(t))=F(ln[F(x[t])])
 \end{equation}
-где $x(t)$ - входной сигнал, $F,~F^{-1}$ - прямое и обратное преобразование Фурье соответственно.
+где $x(t)$ - входной сигнал, $F$ - прямое преобразование Фурье.
 
 Кепстр совместно с мел-фильтрами используется для выделения речевых признаков. Эта та часть звукового сигнала, которая была образована при помощи голосового тракта человека. В книге \cite{CeptrumExplanation} можно найти описание того, как это происходит на стр. 367-380. 
 
@@ -166,7 +182,7 @@ E_k = \sum_{m=0}^{N-1} |x_{k_m}|,~k=\overline{0,z-1}
 	W_{k_q} = ln(\sum_{m=0}^{N-1} |S_{k_m}|^2 \cdot H(q,m)),~q=\overline{0,Q-1},~k=\overline{0,u-1}
 \end{equation}
 
-В качестве обратного преобразования Фурье в алгоритме MFCC используется дискретное косинусное преобразование. Получение итоговых коэффициентов MFCC происходит по формуле:
+В MFCC вместо прямого преобразования Фурье над логарифмом спектра мощности сигнала используется дискретное косинусное преобразование как его частный случай прямого преобразования Фурье. Получение итоговых коэффициентов MFCC происходит по формуле:
 \begin{equation}
 	c_{k_n} = ln(\sum_{m=0}^{Q-1} W_{k_m} cos(\dfrac{\pi}{Q} (m+\dfrac{1}{2})n)),~n=\overline{0,d-1},d \le Q,~k=\overline{0,u-1},
 \end{equation}
@@ -228,7 +244,7 @@ E_k = \sum_{m=0}^{N-1} |x_{k_m}|,~k=\overline{0,z-1}
 \subsubsection{Входные и выходные данные модели}
 Входной тензор модели - матрица MFCC коэффициентов для соответствующей команды. Его размерность - $u_{max} \times d$. Для составленного датасета $u_max=400, d=13$.
 
-Выходной тензор имеет размерность $g \times 1$, где $g$ - количество возможных команд для распознавания. Для составленного датасета $g=11$. Индекс распознанной команды соответствует индексу максимального элемента выходного тензора. Индексация выходном тензоре начинается с 0.
+Выходной тензор имеет размерность $g \times 1$, где $g$ - количество возможных команд для распознавания. Для составленного датасета $g=11$. Скалярная метка распознанной команды соответствует индексу максимального элемента выходного тензора. Индексация выходном тензоре начинается с 0.
 \subsubsection{Архитектура нейронной сети}
 Архитектура свёрточной нейронной сети приведена на рисунке \ref{fig:cnn_model}. Как видно из рисунка, сеть включает в себя:
 \begin{itemize}[leftmargin=2cm]
@@ -290,9 +306,9 @@ E_k = \sum_{m=0}^{N-1} |x_{k_m}|,~k=\overline{0,z-1}
 
 В корневой директории <<logs>> в процессе предобработки данных создаётся файл <<log.log>>, в который записывается краткий отчёт об обработке каждой звукового файла.
 
-В корневой директории <<model\_checkpoints>> в процессе обучения нейронной сети создаются дочерние директории <<experiment\{$i$\}>>\footnotemark[\value{footnote}], $i=\overline{1,3}$ - номер эксперимента. В этой дочерней директории создаётся своя дочерняя директория <<{nn\_type}>>. Параметр nn\_type может принимать значения <<cnn>> в случае обучения свёрточной сети и <<mlp>> в случае обучения многослойного персептрона. В директорию <<{nn\_type}>> сохраняются веса сети с наилучшей точностью распознавания на валидационных данных.
+В корневой директории <<model\_checkpoints>> в процессе обучения нейронной сети создаются дочерние директории <<experiment\{$i$\}>>\footnotemark[\value{footnote}], $i=\overline{1,3}$ - номер эксперимента. В этой дочерней директории создаётся своя дочерняя директория <<{nn\_type}>>. Параметр nn\_type принимает  значения <<cnn>> при обучении свёрточной сети и <<mlp>> при обучении многослойного персептрона. В директорию <<{nn\_type}>> сохраняются веса сети с наилучшей точностью распознавания на валидационных данных.
 
-\footnotetext{Фигурные скобки не являются частью имени файла или директории}
+\footnotetext[1]{Фигурные скобки не являются частью имени файла или директории.}
 
 Для создания датасета было разработано веб-приложение при помощи языков Javascript, HTML, CSS и фреймворка NodeJS. Этот сервис позволяет записывать речевые команды и сохранять их в нужном для программы предобработки wav формате с правильным названием. Это позволило в короткие сроки записать необходимое количество дикторов и уменьшило скорость записи в несколько раз, так как в обычных программах записи звука очень много времени уходит на сохранение с правильными параметрами звуковой дорожки. Код веб-приложения доступен в приложении.
 
@@ -316,14 +332,17 @@ E_k = \sum_{m=0}^{N-1} |x_{k_m}|,~k=\overline{0,z-1}
 Датасет предварительно разделяется на тренировочную и тестовую части. На тренировочную часть отводится 70\% данных каждого диктора, на тестовую часть - 30\%.
 
 \label{par:saving_preprocessed_data}
-Матрицы коэффициентов MFCC, полученных на этапе \ref{par:unify_coeffs} объединяются в массив и записываются в файл <<speaker\{$i$\}\_data.npy>>\footnotemark \space в виде numpy массива. В файл <<speaker\{$i$\}\_labels.npy>>\footnotemark[\value{footnote}] записываются индексы команд в виде массива, в том же порядке, что и соответствующие им матрицы коэффициентов MFCC. Здесь $i=\overline{1,6}$  - номер диктора. Соответствие произнесённых диктором команд и их индексов представлено в таблице \ref{table:commands}.
+Матрицы коэффициентов MFCC, полученных на этапе \ref{par:unify_coeffs} объединяются в массив и записываются в файл <<speaker\{$i$\}\_data.npy>>\footnotemark[\value{footnote}] \space в виде numpy массива. В файл <<speaker\{$i$\}\_labels.npy>>\footnotemark[\value{footnote}] записываются скалярные метки команд в виде массива, в том же порядке, что и соответствующие им матрицы коэффициентов MFCC. Здесь $i=\overline{1,6}$  - номер диктора. Соответствие произнесённых диктором команд и их скалярных меток представлено в таблице \ref{table:commands}.
 
-\footnotetext{Фигурные скобки не являются частью имени файла или директории}
+\footnotetext[1]{Фигурные скобки не являются частью имени файла или директории.}
 
 \begin{table}[H]
 	\small
-	\centering
-	\csvautotabular{csv/commands.csv}
-	\caption{Соответствие команд и их индексов}
-	\label{table:commands}
+	\begin{tabular}[c]{ | l | l | l | l | l | l | l | l | l | l | l | l |}
+		\hline
+		Команда	 &  back & down & menu & off & on & open & play & power & stop & up & volume \\ \hline
+		Скалярная метка & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\ \hline
+		
+	\end{tabular}
+	\caption{\label{table:commands}Типы дикторов и данные количестве записанных команд}
 \end{table}
