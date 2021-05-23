@@ -19,7 +19,7 @@ def get_commands_list(nums):
 
 def get_commands_list_with_silence(nums):
     lst = get_commands_list(nums)
-    lst.append('нераспознанная')
+    lst.append('нераспозн.')
     return lst
 
 def get_num_by_command(command, commands):
