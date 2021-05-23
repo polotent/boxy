@@ -49,7 +49,7 @@ def plot_metrics(history, save_path=None):
 
 def plot_confusion_matrix(df_cm_arr, save_path=None):
     fig, ax = plt.subplots(nrows=len(df_cm_arr) // 2, ncols=2, figsize=(17,10))
-    plt.subplots_adjust(wspace=0.1, hspace=0.35)
+    plt.subplots_adjust(wspace=0.1, hspace=0.45)
     for i, df_cm in enumerate(df_cm_arr):
         cm = np.diag(np.diag(df_cm['cm'].corr()))
         cm = np.delete(cm, (-1), axis=0)
