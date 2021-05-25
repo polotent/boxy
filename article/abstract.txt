@@ -1,0 +1,13 @@
+Tags
+Russian:
+РАСПОЗНАВАНИЕ РЕЧИ, НЕЙРОННЫЕ СЕТИ, МНОГОСЛОЙНЫЕ ПЕРСЕПТРОН, СВЁРТОЧНАЯ НЕЙРОННАЯ СЕТЬ, АЛГОРИТМ МЕЛ-ЧАСТОТНЫХ КЕПСТРАЛЬНЫХ КОЭФФИЦИЕНТОВ, ШКАЛА МЕЛ
+
+English:
+SPEECH RECOGNITION, NEURAL NETWORKS, MULTILAYER PERCEPTRON, CONVOLUTIONAL NEURAL NETWORK, MEL-FREQUENCY CEPSTRAL COEFFICIENTS ALGORITHM, MEL SCALE
+
+Abstract
+Russian:
+В данной работе поставлена задача распознавания речевых команд. Разработан и реализован поэтапно алгоритм распознавания. Подробно рассмотрены стадии предобработки звукового сигнала и выделения речевых признаков. В качестве признаков использованы мел-частотные кепстральные коэффициенты. Построены архитектуры нейронных сетей для многослойного персептрона и свёрточной нейронной сети. Проведены вычислительные эксперименты с использованием выбранных архитектур и сделаны выводы об эффективности алгоритма распознавания речевых команд при различных параметрах обучения.
+
+English
+This work raises speech commands recognition problem. A recognition algorithm has been developed and implemented in stages. The stages of audio signal preprocessing and speech feature extraction are considered in detail. Mel-frequency cepstral coefficients are used as speech features to recognize speech commands. Neural network architectures for multilayer perceptron and convolutional neural network have been built. The experiments are conducted for proposed architectures and the conclusion is drawn about the efficiency of the speech commands recognition algorithm with different parameters at the training stage. Computational experiments were carried out using the selected architectures and conclusions were drawn about the effectiveness of the speech command recognition algorithm for various training parameters.
